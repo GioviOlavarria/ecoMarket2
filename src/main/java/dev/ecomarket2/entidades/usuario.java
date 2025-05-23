@@ -10,6 +10,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
 
+import java.time.LocalDateTime;
+
 @Data
 @Entity
 @Table(name = "tabla_usuarios")
@@ -41,4 +43,57 @@ public class usuario {
     @Column(nullable = false)
     private String contrasena;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private tipoUsuario tipoUsuario;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private estadoUsuario estadoUsuario;
+
+    @Column(length = 200)
+    private String direccion;
+
+    @Column(length = 50)
+    private String ciudad;
+
+    @Column(length = 50)
+    private String region;
+
+    @Column(name = "codigo_postal", length = 10)
+    private String codigoPostal;
+
+    @Column(name = "fecha_creacion", nullable = false)
+    private LocalDateTime fechaCreacion;
+
+    @Column(name = "fecha_actualizacion")
+    private LocalDateTime fechaActualizacion;
+
+    @Column(name = "ultimo_acceso")
+    private LocalDateTime ultimoAcceso;
+
+    @Column(name = "intentos_fallidos")
+    private Integer intentosFallidos = 0;
+
+    @Column(name = "cuenta_bloqueada")
+    private Boolean cuentaBloqueada = false;
+
+    @Column(name = "fecha_bloqueo")
+    private LocalDateTime fechaBloqueo;
+
+    @PrePersist
+    protected void onCreate() {
+        fechaCreacion = LocalDateTime.now();
+        if (estadoUsuario == null) {
+            estadoUsuario = estadoUsuario.ACTIVO;
+        }
+        if (tipoUsuario == null) {
+            tipoUsuario = tipoUsuario.CLIENTE;
+        }
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        fechaActualizacion = LocalDateTime.now();
+    }
 }
